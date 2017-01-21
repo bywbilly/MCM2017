@@ -22,6 +22,8 @@ class SimulationManager:
         for x in range(steps): self.makeStep()
 
     def makeStep(self):
+        if not self.stepsMade:
+            self.trafficGenerator.prepare(self.road)
         self.trafficGenerator.generate(self.road)
         self.road.update();
         self.stepsMade += 1

@@ -38,6 +38,20 @@ class Road:
         else:
             return False
 
+    def pushCarsPoisson(self, amount, gap, step, pre_step, serve_time):
+        ret = [0 for _ in range(self.getLanesCount())]
+        for i in range(self.getLanesCount()):
+            if not amount[i]:
+                continue
+            start_step = pre_step[i] + serve_time[i] 
+            if start_step > step:
+                car = Car(self, (0, i), self.speedLimits.maxSpeed)
+                if self.placeObject(car):
+                    ret[i] = 1
+        return ret
+
+        
+
     def pushCars(self, amount):
         return self.__pushCars(amount, [x for x in reversed(range(self.getLanesCount()))])
 

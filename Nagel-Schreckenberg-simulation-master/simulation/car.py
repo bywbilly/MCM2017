@@ -3,8 +3,9 @@ import random
 class Car:
     slowDownProbability = 0
     laneChangeProbability = 0
-    def __init__(self, road, pos, velocity = 0):
+    def __init__(self, road, pos, velocity = 0, acclerate = 0):
         self.velocity = velocity
+        self.acclerate = acclerate
         self.road = road
         self.pos = pos
         self.prevPos = pos
