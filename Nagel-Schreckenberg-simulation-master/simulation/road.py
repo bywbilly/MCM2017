@@ -63,7 +63,7 @@ class Road:
                 continue
             start_step = pre_step[i] + serve_time[i] 
             if start_step < step:
-                car = Car(self, (0, i), self.speedLimits.maxSpeed)
+                car = Car(self, (0, i), 0)
                 if self.placeObject(car):
                     ret[i] = 1
         return ret

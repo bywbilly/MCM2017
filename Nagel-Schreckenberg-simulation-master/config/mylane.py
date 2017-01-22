@@ -25,6 +25,6 @@ SpeedLimit(range=((mergePos[4], 4), (length,4)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[5], 5), (length,5)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[6], 6), (length,6)), limit=0, ticks=0),
 ]
-trafficGenerator = TrafficGenerator(1)
+trafficGenerator = TrafficGenerator(10)
 
 slowDownProbability, laneChangeProbability = 0.0, -1.0

@@ -7,17 +7,17 @@ class Representation():
         self.width, self.heigth = screen.get_width(), screen.get_height()
         self.road = road
         self.updateFrame = simulationManager.updateFrame
-        self.margins = (10, 10)
-        self.cellSize = 15
+        self.margins = (100, 100)
+        self.cellSize = 15 
         self.acc = 0
         self.maxSpeed = maxSpeed
 
         self.infoDisplayer = InfoDisplayer(screen, road, simulationManager)
 
-        #self.colors = [(0, i + 1, 0) for i in range(255)]
-        #self.colors.insert(0, (255, 0, 0))
+        self.colors = [(0, i + 1, 0) for i in range(255)]
+        self.colors.insert(0, (255, 0, 0))
 
-        self.colors = [ (255, 0, 0), (180, 20, 0), (80, 60, 0), (100, 80, 0), (0, 180, 0), (0, 255, 0), (80, 120, 0), (60, 140, 0), (40, 160, 0) ]
+        #self.colors = [ (255, 0, 0), (180, 20, 0), (80, 60, 0), (100, 80, 0), (0, 180, 0), (0, 255, 0), (80, 120, 0), (60, 140, 0), (40, 160, 0) ]
 
     def draw(self, dt):
         self.__updateAcc(dt)
@@ -54,8 +54,8 @@ class Representation():
         invProgress = (1 - self.acc / self.updateFrame)*self.cellSize
         offset = (car.prevPos[0] - car.pos[0])*invProgress, (car.prevPos[1] - car.pos[1])*invProgress
         realPos = self.__getPosOnScreen((x+offset[0], y+offset[1]))
-        pygame.draw.rect(self.screen, self.colors[int(car.velocity)], (realPos[0],realPos[1],self.cellSize,self.cellSize), 0)
-        #pygame.draw.rect(self.screen, self.colors[int((1.0 * car.velocity) / (1.0 * self.maxSpeed) * 255.0)], (realPos[0],realPos[1],self.cellSize,self.cellSize), 0)
+        #pygame.draw.rect(self.screen, self.colors[int(car.velocity)], (realPos[0],realPos[1],self.cellSize,self.cellSize), 0)
+        pygame.draw.rect(self.screen, self.colors[int((1.0 * car.velocity) / (1.0 * self.maxSpeed) * 255.0)], (realPos[0],realPos[1],self.cellSize,self.cellSize), 0)
 
     def __updateAcc(self, dt):
         self.acc += dt

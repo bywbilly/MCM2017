@@ -52,7 +52,10 @@ class Car:
 
     def updateX(self):
         self.pre_velocity = self.velocity
+        print (self.velocity)
         self.velocity = max(0, self.calcNewVelocity())
+        print (self.velocity)
+        print('---------')
         self.acclerate = self.calcNewAcclerate()
         #print(self.acclerate)
 
