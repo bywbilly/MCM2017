@@ -13,8 +13,8 @@ length = 50
 
 maxSpeed = 5
 
-mergePos = [3, length, 3, length, 3, length, 3]
-is_main = [0, 1, 0, 1, 0, 1, 0]
+mergePos = [10, 20, length, length, length, 20, 10]
+is_main = [0, 0, 1, 1, 1, 0, 0]
 
 speedLimits = [ 
 SpeedLimit(range=((mergePos[0],0),(length,0)), limit=0, ticks=0), 
