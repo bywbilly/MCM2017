@@ -19,9 +19,9 @@ clock = pygame.time.Clock()
 simulation.car.Car.slowDownProbability = config.slowDownProbability
 simulation.car.Car.laneChangeProbability = config.laneChangeProbability
 speedLimits = simulation.speedLimits.SpeedLimits(config.speedLimits, config.maxSpeed)
-road = simulation.road.Road(config.lanes, config.length, speedLimits)
+road = simulation.road.Road(config.lanes, config.length, speedLimits, config.is_main)
 simulation = SimulationManager(road, config.trafficGenerator, config.updateFrame)
-representation = Representation(screen, road, simulation)
+representation = Representation(screen, road, simulation, config.maxSpeed)
 
 while simulation.running:
     for event in pygame.event.get():

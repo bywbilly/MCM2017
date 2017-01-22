@@ -3,13 +3,19 @@ from functools import reduce
 from simulation.car import Car
 
 class Road:
-    def __init__(self, lanesCount, length, speedLimits):
+    def __init__(self, lanesCount, length, speedLimits, is_main):
         self.lanes = Road.generateEmptyLanes(lanesCount, length)
         self.updatedLanes = Road.generateEmptyLanes(lanesCount, length)
         self.speedLimits = speedLimits if speedLimits != None else simulation.speedLimits.SpeedLimits([], 5)
         # stats
         self.deadCars = 0 # cars that are gone
         self.updates = 0
+        self.is_main = is_main
+        print (is_main)
+        self.lanesCount = lanesCount
+        self.move_dir = [0 for _ in range(lanesCount)]
+        self.laneChange = 0
+        self.accident_rate = 0.0
 
     def __updateCars(self, action):
         for lane in self.lanes:
@@ -17,15 +23,27 @@ class Road:
                 if entity != None:
                     newPos = action(entity)
                     if self.inBounds(newPos):
-                        self.updatedLanes[newPos[1]][newPos[0]] = entity
+                        self.updatedLanes[int(newPos[1])][int(newPos[0])] = entity
                     else: self.deadCars += 1
         self.flipLanes()
 
+    def updateAccidentRate(self, accident_rate):
+        self.accident_rate += accident_rate
+        self.laneChange += 1
+
+    def changeDir(self, pos, move_dir):
+        self.move_dir[pos[1]] = move_dir
+
     def update(self):
+        self.laneChange = 0
+        self.accident_rate = 0.0
         self.speedLimits.update()
+        self.move_dir = [0 for _ in range(self.lanesCount)]
         self.__updateCars(lambda x: x.updateLane())
         self.__updateCars(lambda x: x.updateX())
         self.updates += 1
+        if self.laneChange != 0:
+            self.accident_rate /= float(self.laneChange)
 
     def flipLanes(self):
         self.lanes = self.updatedLanes
@@ -44,7 +62,7 @@ class Road:
             if not amount[i]:
                 continue
             start_step = pre_step[i] + serve_time[i] 
-            if start_step > step:
+            if start_step < step:
                 car = Car(self, (0, i), self.speedLimits.maxSpeed)
                 if self.placeObject(car):
                     ret[i] = 1
@@ -80,9 +98,13 @@ class Road:
         """Counts distance between given pos and next object (car or obstacle), takes into considerations stops (speedLimit set to 0)"""
         return self.__distanceToNextThing((pos[0]+1, pos[1]))
     def __distanceToNextThing(self, pos):
+        #print (pos)
+        #print (self.lanes[pos[1]])
         if pos[0] >= self.getLength():
             return self.getLength() # heaven
         else:
+            #if self.lanes[pos[1]][pos[0]] == None:
+            #    print("!!!")
             if self.lanes[pos[1]][pos[0]] == None and not self.speedLimits.shouldStop(pos):
                 return 1 + self.__distanceToNextThing((pos[0]+1, pos[1]))
             else:
@@ -99,6 +121,21 @@ class Road:
             else:
                 return self.findPrevCar( (pos[0] - 1, pos[1]) )
 
+    def findNxtCar(self, pos):
+        if not self.inBounds(pos) or self.getSpeedLimitAt(pos) == 0:
+            return None
+        else:
+            if self.lanes[pos[1]][pos[0]] != None:
+                return self.lanes[pos[1]][pos[0]]
+            else:
+                return self.findNxtCar( (pos[0] + 1, pos[1]) )
+
+    def possibleLaneChange(self, pos):
+        if self.is_main[pos[1]]:
+            return False
+        else:
+            return True
+        
     def possibleLaneChangeUp(self, pos):
         return self.__possibleLaneChange(pos, pos[1]-1)
     def possibleLaneChangeDown(self, pos):
@@ -107,10 +144,19 @@ class Road:
         if not self.inBounds( (0, destLane) ) or self.lanes[destLane][pos[0]] != None: return False
         else:
             sourceLane = pos[1]
+            #print (sourceLane, destLane)
             oneMoreLane = destLane + (destLane - sourceLane)
+            #print (oneMoreLane)
+            if self.inBounds((0, oneMoreLane)) and self.move_dir[oneMoreLane] == sourceLane - destLane:
+                return False
+
             if not self.inBounds( (0, oneMoreLane) ): return True
             else:
-                return self.lanes[oneMoreLane][pos[0]] == None
+                if self.lanes[oneMoreLane][pos[0]] == None:
+                    return True
+                else:
+                    return self.move_dir[oneMoreLane] != sourceLane - destLane
+                #return self.lanes[oneMoreLane][pos[0]] == None
 
     def inBounds(self, pos):
         return pos[0] >= 0 and pos[1] >= 0 and pos[0] < self.getLength() and pos[1] < self.getLanesCount()

@@ -8,12 +8,13 @@ updateFrame = 500
 
 seed = None
 
-lanes = 8
+lanes = 7
 length = 80
 
 maxSpeed = 5
 
-mergePos = [40, 50, 100, 100, 100, 100, 70, 60]
+mergePos = [40, length, 40, length, 40, length, 40]
+is_main = [0, 1, 0, 1, 0, 1, 0]
 
 speedLimits = [ 
 SpeedLimit(range=((mergePos[0],0),(length,0)), limit=0, ticks=0), 
@@ -23,6 +24,7 @@ SpeedLimit(range=((mergePos[3], 3), (length,3)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[4], 4), (length,4)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[5], 5), (length,5)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[6], 6), (length,6)), limit=0, ticks=0),
-SpeedLimit(range=((mergePos[7], 7), (length,7)), limit=0, ticks=0) ]
-trafficGenerator = SimpleTrafficGenerator(2)
-slowDownProbability, laneChangeProbability = 0.15, 0.2
+]
+trafficGenerator = TrafficGenerator(1)
+
+slowDownProbability, laneChangeProbability = 0.0, -1.0

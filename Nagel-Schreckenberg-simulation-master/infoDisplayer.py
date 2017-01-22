@@ -21,8 +21,10 @@ class InfoDisplayer():
         deadCars = self.road.deadCars
         updates = self.road.updates
         congestion = totalCars*100/self.cells
+        accident_rate = self.road.accident_rate
 
         text = [self.text[0]]
+        text.append("Accident rate: {:0.3f}".format(accident_rate))
         text.append("avg speed: {:0.3f}".format(avgSpeed, deadCars))
         text.append("updates: " + str(updates))
         text.append("dead cars: " + str(deadCars))
