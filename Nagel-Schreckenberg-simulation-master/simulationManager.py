@@ -27,6 +27,8 @@ class SimulationManager:
         self.trafficGenerator.generate(self.road)
         self.road.update();
         self.stepsMade += 1
+        if self.trafficGenerator.totalCars <= self.road.deadCars:
+            self.running = False
 
     def processKey(self, key):
         {

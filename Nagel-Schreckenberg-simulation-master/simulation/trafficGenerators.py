@@ -4,6 +4,7 @@ import numpy as np
 class SimpleTrafficGenerator():
     def __init__(self, carPerUpdate=10):
         self.queue = 0
+        self.totalCars = 0
         self.carPerUpdate = carPerUpdate
 
     def prepare(self, road):
@@ -12,8 +13,13 @@ class SimpleTrafficGenerator():
     def generate(self, road):
         #amount = random.randint(0, self.carPerUpdate)
         #The total number of each toll's car is a poisson distribution
-        #amount = np.random.poisson(self.carPerUpdate)
-        amount = 100
+        amount = 10000 * np.random.poisson(self.carPerUpdate)
+        #amount = 100
+        for i, item in enumerate(road.is_etc):
+            if item:
+                amount[i] *= road.ect_ratio
+        self.totalCars = np.sum(amount)
+
         self.tryGenerate(road, amount)
 
     def tryGenerate(self, road, amount):
@@ -28,11 +34,16 @@ class TrafficGenerator():
         self.pre_step = []
         self.serve_time = []
         self.step = 0
+        self.totalCars = 0
         self.Lambda = Lambda
 
     def prepare(self, road):
-        #self.amount = np.random.poisson(self.Lambda, road.getLanesCount())
-        self.amount = [10 for _ in range(road.getLanesCount())]
+        self.amount = np.random.poisson(self.Lambda, road.getLanesCount())
+        #self.amount = [10 for _ in range(road.getLanesCount())]
+        for i, item in enumerate(road.is_etc):
+            if item:
+                self.amount[i] *= road.etc_ratio 
+        self.totalCars = np.sum(self.amount)
         self.gap = np.random.exponential(self.Lambda, road.getLanesCount())
         self.serve_time = np.random.normal(5.5, 1.83, road.getLanesCount())
         self.pre_step = [0 for _ in range(road.getLanesCount())]

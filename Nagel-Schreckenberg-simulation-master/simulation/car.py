@@ -21,7 +21,8 @@ class Car:
     def updateLane(self):
         self.prevPos = self.pos
         #self.priority = False
-        if (not self.road.possibleLaneChange(self.pos)) and self.velocity != 0:
+        if (not self.road.possibleLaneChange(self.pos)): 
+#and self.velocity != 0:
             return self.pos
         flip = random.random()
         go_up, accident_rate_up = self.willingToChangeUp()

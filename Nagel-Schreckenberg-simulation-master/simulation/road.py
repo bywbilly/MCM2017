@@ -3,7 +3,7 @@ from functools import reduce
 from simulation.car import Car
 
 class Road:
-    def __init__(self, lanesCount, length, speedLimits, is_main):
+    def __init__(self, lanesCount, length, speedLimits, is_main, etc_ratio, is_etc):
         self.lanes = Road.generateEmptyLanes(lanesCount, length)
         self.updatedLanes = Road.generateEmptyLanes(lanesCount, length)
         self.speedLimits = speedLimits if speedLimits != None else simulation.speedLimits.SpeedLimits([], 5)
@@ -11,11 +11,14 @@ class Road:
         self.deadCars = 0 # cars that are gone
         self.updates = 0
         self.is_main = is_main
-        print (is_main)
+        self.etc_ratio = etc_ratio
+        self.is_etc = is_etc
+        #print (is_main)
         self.lanesCount = lanesCount
         self.move_dir = [0 for _ in range(lanesCount)]
         self.laneChange = 0
         self.accident_rate = 0.0
+        #self.totalCars = 0
 
     def __updateCars(self, action):
         for lane in self.lanes:
