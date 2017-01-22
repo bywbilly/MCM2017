@@ -8,7 +8,7 @@ class Representation():
         self.road = road
         self.updateFrame = simulationManager.updateFrame
         self.margins = (100, 100)
-        self.cellSize = 15 
+        self.cellSize = 7
         self.acc = 0
         self.maxSpeed = maxSpeed
 

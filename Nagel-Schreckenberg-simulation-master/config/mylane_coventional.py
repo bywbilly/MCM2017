@@ -9,21 +9,12 @@ updateFrame = 500
 seed = None
 
 lanes = 7
-<<<<<<< HEAD
-length = 80
-etc_ratio = 0.5
-
-maxSpeed = 5
-
-mergePos = [length - 40, length, length - 40, length, length - 40, length, length - 40]
-=======
 length = 50
 
 maxSpeed = 5
 
-mergePos = [3, length, 3, length, 3, length, 3]
-is_main = [0, 1, 0, 1, 0, 1, 0]
-is_etc  = [1, 0, 0, 0, 0, 0, 1]
+mergePos = [10, 20, length, length, length, 20, 10]
+is_main = [0, 0, 1, 1, 1, 0, 0]
 
 speedLimits = [ 
 SpeedLimit(range=((mergePos[0],0),(length,0)), limit=0, ticks=0), 
