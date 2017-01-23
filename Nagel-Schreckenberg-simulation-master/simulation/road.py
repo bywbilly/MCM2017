@@ -5,11 +5,13 @@ from simulation.car import Car
 class Road:
     def __init__(self, lanesCount, length, speedLimits, is_main, etc_ratio, is_etc):
         self.lanes = Road.generateEmptyLanes(lanesCount, length)
+        self.length = length
         self.updatedLanes = Road.generateEmptyLanes(lanesCount, length)
         self.speedLimits = speedLimits if speedLimits != None else simulation.speedLimits.SpeedLimits([], 5)
         # stats
         self.deadCars = 0 # cars that are gone
         self.updates = 0
+        self.deltaV = 0.0
         self.is_main = is_main
         self.etc_ratio = etc_ratio
         self.is_etc = is_etc
@@ -18,6 +20,8 @@ class Road:
         self.move_dir = [0 for _ in range(lanesCount)]
         self.laneChange = 0
         self.accident_rate = 0.0
+        self.avgSpeed = 0.0
+        self.print_accidentRate = []
         #self.totalCars = 0
 
     def __updateCars(self, action):
@@ -29,6 +33,9 @@ class Road:
                         self.updatedLanes[int(newPos[1])][int(newPos[0])] = entity
                     else: self.deadCars += 1
         self.flipLanes()
+    
+    def updateDeltaV(self, v):
+        self.deltaV += v
 
     def updateAccidentRate(self, accident_rate):
         self.accident_rate += accident_rate
@@ -47,6 +54,11 @@ class Road:
         self.updates += 1
         if self.laneChange != 0:
             self.accident_rate /= float(self.laneChange)
+        self.avgSpeed += self.getAvgCarSpeed()[1]
+        #print ('!!')
+        #print (self.updates)
+        #print (self.accident_rate)
+        self.print_accidentRate.append(self.accident_rate)
 
     def flipLanes(self):
         self.lanes = self.updatedLanes
@@ -66,7 +78,7 @@ class Road:
                 continue
             start_step = pre_step[i] + serve_time[i] 
             if start_step < step:
-                car = Car(self, (0, i), 0)
+                car = Car(self, (0 if not self.is_etc[i] else 1, i))
                 if self.placeObject(car):
                     ret[i] = 1
         return ret

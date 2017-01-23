@@ -18,9 +18,9 @@ length = 50
 
 maxSpeed = 5
 
-mergePos = [5, 10, 15, 20, 30, length, length, length, 30, 20, 15, 10, 5]
+mergePos = [5, 10, 15, 20, 25, length, length, length, 25, 20, 15, 10, 5]
 is_main = [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
-is_etc  = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+is_etc  = [0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0]
 
 speedLimits = [ 
 SpeedLimit(range=((mergePos[0],0),(length,0)), limit=0, ticks=0), 
@@ -37,6 +37,6 @@ SpeedLimit(range=((mergePos[10], 10), (length,10)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[11], 11), (length,11)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[12], 12), (length,12)), limit=0, ticks=0),
 ]
-trafficGenerator = TrafficGenerator(2)
+trafficGenerator = TrafficGenerator(30)
 
 slowDownProbability, laneChangeProbability = 0.0, -1.0

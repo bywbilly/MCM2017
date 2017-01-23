@@ -35,17 +35,20 @@ class TrafficGenerator():
         self.serve_time = []
         self.step = 0
         self.totalCars = 0
+        self.spawnCars = 0
         self.Lambda = Lambda
 
     def prepare(self, road):
-        self.amount = np.random.poisson(self.Lambda, road.getLanesCount())
-        #self.amount = [10 for _ in range(road.getLanesCount())]
-        for i, item in enumerate(road.is_etc):
-            if item:
-                self.amount[i] *= road.etc_ratio 
+        #self.amount = 5 * np.random.poisson(self.Lambda, road.getLanesCount())
+        #print (self.amount)
+        self.amount = [1000000 for _ in range(road.getLanesCount())]
         self.totalCars = np.sum(self.amount)
         self.gap = np.random.exponential(self.Lambda, road.getLanesCount())
         self.serve_time = np.random.normal(5.5, 1.83, road.getLanesCount())
+        for i, item in enumerate(road.is_etc):
+            if item:
+                self.gap[i] = np.random.exponential(self.Lambda * 0.75)
+                self.serve_time[i] = 1.0
         self.pre_step = [0 for _ in range(road.getLanesCount())]
         for i in range(len(self.amount)):
             if self.amount[i]:
@@ -56,7 +59,12 @@ class TrafficGenerator():
     def generate(self, road): 
         self.gap = np.random.exponential(self.Lambda, road.getLanesCount())
         self.serve_time = np.random.normal(5.5, 1.83, road.getLanesCount())
+        for i, item in enumerate(road.is_etc):
+            if item:
+                self.gap[i] = np.random.exponential(self.Lambda * 0.75)
+                self.serve_time[i] = 1.0
         added = road.pushCarsPoisson(self.amount, self.gap, self.step, self.pre_step, self.serve_time)
+        self.spawnCars += np.sum(added)
 
         self.step += 1
         for i in range(len(self.amount)):

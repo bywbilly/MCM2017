@@ -25,45 +25,54 @@ class Car:
 #and self.velocity != 0:
             return self.pos
         flip = random.random()
-        go_up, accident_rate_up = self.willingToChangeUp()
-        go_down, accident_rate_down = self.willingToChangeDown()
+        go_up, accident_rate_up, v_up  = self.willingToChangeUp()
+        go_down, accident_rate_down, v_down = self.willingToChangeDown()
         if flip > 0.5:
             if go_up:
                 if random.random() >= Car.laneChangeProbability:
                     self.pos = self.pos[0], self.pos[1]-1
                     self.road.changeDir(self.pos, -1)
+                    self.road.updateDeltaV(v_up)
                     self.road.updateAccidentRate(accident_rate_up)
             elif go_down:
                 if random.random() >= Car.laneChangeProbability:
                     self.pos = self.pos[0], self.pos[1]+1
                     self.road.changeDir(self.pos, 1)
+                    self.road.updateDeltaV(v_down)
                     self.road.updateAccidentRate(accident_rate_down)
         else:
             if go_down:
                 if random.random() >= Car.laneChangeProbability:
                     self.pos = self.pos[0], self.pos[1]+1
                     self.road.changeDir(self.pos, 1)
+                    self.road.updateDeltaV(v_down)
                     self.road.updateAccidentRate(accident_rate_down)
             elif go_up:
                 if random.random() >= Car.laneChangeProbability:
                     self.pos = self.pos[0], self.pos[1]-1
                     self.road.changeDir(self.pos, -1)
+                    self.road.updateDeltaV(v_up)
                     self.road.updateAccidentRate(accident_rate_up)
         return self.pos
 
     def updateX(self):
         self.pre_velocity = self.velocity
-        print (self.velocity)
+        #print (self.velocity)
         self.velocity = max(0, self.calcNewVelocity())
-        print (self.velocity)
-        print('---------')
+        #print (self.velocity)
+        #print('---------')
         self.acclerate = self.calcNewAcclerate()
         #print(self.acclerate)
 
         #if self.velocity > 0 and random.random() <= Car.slowDownProbability:
         #    self.velocity -= 1
         #print(self.pos[0], self.velocity)
-        self.pos = int(self.pos[0] + self.velocity), self.pos[1]
+        nxtCar = self.road.findNxtCar((self.pos[0] + 1, self.pos[1]))
+        if not self.road.is_main[self.pos[1]]:
+            #self.pos = int(self.pos[0] + self.velocity), self.pos[1]
+            self.pos = min(int(self.pos[0] + self.velocity), self.road.length - 1), self.pos[1]
+        else:
+            self.pos = int(self.pos[0] + self.velocity), self.pos[1]
         return self.pos
 
     #def calcNewVelocity(self):
@@ -96,38 +105,46 @@ class Car:
         #print("-----------------------------")
         #print(self.pos)
         ret = 0.0
+        rett = 0.0
         ret1, ret2 = False, False
+        if self.pos[1] > 0 and self.road.lanes[self.pos[1] - 1][self.pos[0]] is not None:
+            return False, ret, rett
         if self.road.possibleLaneChangeUp(self.pos):
             ret1 = True
         if self.pos[1] > 0 and self.__willingToChangeLane(self.pos[1], self.pos[1] - 1)[0]:
             ret = self.__willingToChangeLane(self.pos[1], self.pos[1] - 1)[1]
+            rett = self.__willingToChangeLane(self.pos[1], self.pos[1] - 1)[2]
             ret2 = True
         if ret1 and ret2:
-            return True, ret
+            return True, ret, rett
         else:
             if ret1 == False and ret2 == True:
                 self.priority = True
-                return True, ret
+                return True, ret, rett
 
-        return False, ret
+        return False, ret, rett
 
         #return self.road.possibleLaneChangeUp(self.pos) and self.__willingToChangeLane(self.pos[1], self.pos[1] - 1)
     def willingToChangeDown(self):
         ret = 0.0
+        rett = 0.0
         ret1, ret2 = False, False
+        if self.pos[1] < 6 and self.road.lanes[self.pos[1] + 1][self.pos[0]] is not None:
+            return False, ret, rett
         if self.road.possibleLaneChangeDown(self.pos):
             ret1 = True
         if self.pos[1] < 6 and self.__willingToChangeLane(self.pos[1], self.pos[1] + 1)[0]:
             ret = self.__willingToChangeLane(self.pos[1], self.pos[1] + 1)[1]
+            rett = self.__willingToChangeLane(self.pos[1], self.pos[1] + 1)[2]
             ret2 = True
         if ret1 and ret2:
-            return True, ret
+            return True, ret, rett
         else:
             if ret1 == False and ret2 == True:
                 self.priority = True
-                return True, ret
+                return True, ret, rett
 
-        return False, ret
+        return False, ret, rett
         #return self.road.possibleLaneChangeDown(self.pos) and self.__willingToChangeLane(self.pos[1], self.pos[1] + 1)
 
     def __willingToChangeLane(self, sourceLane, destLane):
@@ -135,12 +152,12 @@ class Car:
         #print ("!")
         srcLaneSpeed = self.road.getMaxSpeedAt( (self.pos[0], sourceLane) )
         destLaneSpeed = self.road.getMaxSpeedAt( (self.pos[0], destLane) )
-        if destLaneSpeed == 0: return (False, 0.0)
+        if destLaneSpeed == 0: return (False, 0.0, 0.0)
         #if destLaneSpeed <= srcLaneSpeed: return False
         prevCar = self.road.findPrevCar( (self.pos[0], destLane) )
-        if prevCar == None: return (True, 0.0)
+        if prevCar == None: return (True, 0.0, 0.0)
         else:
             distanceToPrevCar = self.pos[0] - prevCar.pos[0]
             safeDistance = prevCar.velocity + 1.0 / 6.0 * np.power(prevCar.velocity, 2) + 1
-            return (distanceToPrevCar > safeDistance, safeDistance / distanceToPrevCar)
+            return (distanceToPrevCar > safeDistance, safeDistance / (0.01 + distanceToPrevCar), np.abs(prevCar.velocity - self.velocity))
             #return distanceToPrevCar > prevCar.velocity + 1.0 / 6.0 * np.power(prevCar.velocity, 2) + 1

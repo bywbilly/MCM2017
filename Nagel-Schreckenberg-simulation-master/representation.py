@@ -8,7 +8,7 @@ class Representation():
         self.road = road
         self.updateFrame = simulationManager.updateFrame
         self.margins = (100, 100)
-        self.cellSize = 7
+        self.cellSize = 15
         self.acc = 0
         self.maxSpeed = maxSpeed
 
@@ -21,8 +21,8 @@ class Representation():
 
     def draw(self, dt):
         self.__updateAcc(dt)
-        #self.screen.fill( (255, 255, 255) )
-        self.screen.fill( (0, 0, 0) )
+        self.screen.fill( (255, 255, 255) )
+        #self.screen.fill( (0, 0, 0) )
         #self.screen.fill( (0, 124, 0) )
         self.drawRoad(dt)
         self.infoDisplayer.draw()

@@ -8,18 +8,17 @@ updateFrame = 500
 
 seed = None
 
-lanes = 13 
+lanes = 13
 length = 100
 etc_ratio = 0.5
 
 
-#mergePos = [length - 40, length, length - 40, length, length - 40, length, length - 40]
 length = 50
 
 maxSpeed = 5
 
-mergePos = [5, 10, 15, 20, 30, length, length, length, 30, 20, 15, 10, 5]
-is_main = [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
+mergePos = [3, 5, length, 5, 3, 5, length, 5, 3, 5, length, 5, 3]
+is_main = [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0]
 is_etc  = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 speedLimits = [ 
@@ -37,6 +36,6 @@ SpeedLimit(range=((mergePos[10], 10), (length,10)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[11], 11), (length,11)), limit=0, ticks=0),
 SpeedLimit(range=((mergePos[12], 12), (length,12)), limit=0, ticks=0),
 ]
-trafficGenerator = TrafficGenerator(2)
+trafficGenerator = TrafficGenerator(10)
 
 slowDownProbability, laneChangeProbability = 0.0, -1.0
